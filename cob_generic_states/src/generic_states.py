@@ -222,7 +222,7 @@ class approach_pose(smach.State):
 			# evaluate service response
 			if not resp.success.data: # robot stands still
 				if timeout > 10:
-					sss.say(["I can not reach my target position because my path or target is blocked"],False)
+					#sss.say(["I can not reach my target position because my path or target is blocked"],False)
 					timeout = 0
 				else:
 					timeout = timeout + 1
@@ -297,7 +297,7 @@ class approach_pose_without_retry(smach.State):
 			# evaluate service response
 			if not resp.success.data: # robot stands still
 				if timeout > 10:
-					sss.say(["I can not reach my target position because my path or target is blocked, I will abort."],False)
+					#sss.say(["I can not reach my target position because my path or target is blocked, I will abort."],False)
 					rospy.wait_for_service('base_controller/stop',10)
 					try:
 						stop = rospy.ServiceProxy('base_controller/stop',Trigger)
