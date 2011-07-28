@@ -189,14 +189,14 @@ class approach_pose(smach.State):
 			return 'failed'
 
 		# try reaching pose
-		handle_base = sss.move("base", pose, False)
+		handle_base = sss.move("base", pose, False, mode=self.mode)
 		move_second = self.move_second
 
 		timeout = 0
 		while True:
 			if (handle_base.get_state() == 3) and (not move_second):
 				# do a second movement to place the robot more exactly
-				handle_base = sss.move("base", pose, False)
+				handle_base = sss.move("base", pose, False, mode=self.mode)
 				move_second = True
 			elif (handle_base.get_state() == 3) and (move_second):
 				return 'succeeded'			
@@ -221,8 +221,8 @@ class approach_pose(smach.State):
 		
 			# evaluate service response
 			if not resp.success.data: # robot stands still
-				if timeout > 10:
-					#sss.say(["I can not reach my target position because my path or target is blocked"],False)
+				if timeout > 30:
+					sss.say(["I can not reach my target position because my path or target is blocked"],False)
 					timeout = 0
 				else:
 					timeout = timeout + 1
@@ -284,7 +284,7 @@ class approach_pose_without_retry(smach.State):
 				error_message = "%s"%e
 				rospy.logerr("<<%s>> service not available, error: %s",service_full_name, error_message)
 				return 'failed'
-		
+
 			# check if service is callable
 			try:
 				is_moving = rospy.ServiceProxy(service_full_name,Trigger)
@@ -296,7 +296,7 @@ class approach_pose_without_retry(smach.State):
 		
 			# evaluate service response
 			if not resp.success.data: # robot stands still
-				if timeout > 10:
+				if timeout > 30:
 					#sss.say(["I can not reach my target position because my path or target is blocked, I will abort."],False)
 					rospy.wait_for_service('base_controller/stop',10)
 					try:
